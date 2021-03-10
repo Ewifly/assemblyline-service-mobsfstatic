@@ -1,0 +1,21 @@
+# Name of the service
+name: MobSFStatic
+# Version of the service
+version: latest
+# Description of the service
+description: >
+  ALv4 MobSF Static analyzer result fetcher
+accepts: android/apk
+rejects: empty|metadata/.*
+stage: CORE
+category: Static Analysis
+file_required: true
+timeout: 10
+disable_cache: false
+enabled: true
+is_external: true
+licence_count: 0
+docker_config:
+  image: localhost:5000/testing/assemblyline-service-mobsfstatic:latest
+  cpu_cores: 1.0
+  ram_mb: 1024
