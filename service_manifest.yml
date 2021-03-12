@@ -1,21 +1,28 @@
-# Name of the service
 name: MobSFStatic
-# Version of the service
 version: $SERVICE_TAG
-# Description of the service
 description: >
   ALv4 MobSF Static analyzer result fetcher
 accepts: android/apk
 rejects: empty|metadata/.*
+
 stage: CORE
 category: Static Analysis
+
 file_required: true
-timeout: 10
+# Maximum execution time the service has before it's considered to be timed out
+timeout: 120
 disable_cache: false
+
+# is the service enabled by default
 enabled: true
-is_external: true
-licence_count: 0
+
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
-  cpu_cores: 1.0
-  ram_mb: 512
+
+update_config:
+  update_interval_seconds: 3600
+  generates_signatures: false
+  method: run
+  run_options:
+    allow_internet_access: false
+    image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
