@@ -109,7 +109,8 @@ class Mobsfstatic(ServiceBase):
         self.log.debug(APK)
         self.scan(APK, APIKEY)
         self.generate_pdf(APK, APIKEY)
-        json_mobsf = self.generate_json(APK, APIKEY)
+        json_mobsf = {}# self.generate_json(APK, APIKEY)
+        json_mobsf['body'] = 'dumb text'
         """let's build the result section"""
         result = Result()
         text_section = ResultSection('MobSF Static section')

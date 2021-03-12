@@ -1,4 +1,4 @@
-name: MobSFStatic
+name: Mobsfstatic
 version: $SERVICE_TAG
 description: >
   ALv4 MobSF Static analyzer result fetcher
