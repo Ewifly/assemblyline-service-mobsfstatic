@@ -81,27 +81,27 @@ class Mobsfstatic(ServiceBase):
 
     def execute(self, request):
         """ call to mobsf """
-        APIKEY = ''
+        APIKEY = 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
 
         source = request.file_path
         dest = source + ".apk"
         
         os.rename(source, dest)
-        """ API KEY RETRIEVING """
-        API_DOC = "api_docs"
-        html = requests.get(SERVER + API_DOC)
-        with open('doc.txt', "w+") as f:
-            f.write(html.text)
-        with open('doc.txt', 'r') as f:
-            datafile = f.readlines()
-            for line in datafile:
-                if "REST API Key" in line:
-                    for i in range(API_KEY_SIZE):
-                        APIKEY = APIKEY + line[42 + i]
-        if os.path.exists("doc.txt"):
-            os.remove("doc.txt")
-        if os.path.exists("doc.html"):
-            os.remove("doc.html")
+        # """ API KEY RETRIEVING """
+        # API_DOC = "api_docs"
+        # html = requests.get(SERVER + API_DOC)
+        # with open('doc.txt', "w+") as f:
+        #     f.write(html.text)
+        # with open('doc.txt', 'r') as f:
+        #     datafile = f.readlines()
+        #     for line in datafile:
+        #         if "REST API Key" in line:
+        #             for i in range(API_KEY_SIZE):
+        #                 APIKEY = APIKEY + line[42 + i]
+        # if os.path.exists("doc.txt"):
+        #     os.remove("doc.txt")
+        # if os.path.exists("doc.html"):
+        #     os.remove("doc.html")
 
         """retrieve results"""
         APK = self.upload(dest, APIKEY)
