@@ -16,6 +16,11 @@ disable_cache: false
 # is the service enabled by default
 enabled: true
 
+config:
+  # MobSF Framework specifications
+  remote_host_url: http://127.0.0.1
+  remote_host_port: 8000
+
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
 
@@ -24,5 +29,5 @@ update_config:
   generates_signatures: false
   method: run
   run_options:
-    allow_internet_access: false
+    allow_internet_access: true
     image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG

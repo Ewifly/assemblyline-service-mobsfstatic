@@ -11,7 +11,7 @@ from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FO
 
 
 API_KEY_SIZE = 64
-SERVER = "http://127.0.0.1:8000/"
+SERVER = "http://192.168.10.78:8000/"
 
 class Mobsfstatic(ServiceBase):
     def __init__(self, config=None):
