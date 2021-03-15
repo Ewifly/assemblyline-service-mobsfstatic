@@ -23,11 +23,12 @@ submission_params:
     value: false
   - default: http://0.0.0.0:8000/
     name: framework_url
-    type: bool
+    type: str
     value: false
   - default: 'enter API key of MobSF framework'
     name: api_key
     type: str
+    value: false
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG

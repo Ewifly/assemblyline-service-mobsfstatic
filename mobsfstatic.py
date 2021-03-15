@@ -20,6 +20,8 @@ class Mobsfstatic(ServiceBase):
         self.log.debug("MobSF service ended")
 
     def upload(self, file):
+        print('XOXOXOXOXOXOXOXOXOXOXOXOXOXOXO')
+        print(self.APIKEY)
         # Upload a file
         self.log.debug("Uploading file : " + str(file))
         multipart_data = MultipartEncoder(fields={'file': (file, open(file, 'rb'), 'application/octet-stream')})
@@ -79,7 +81,7 @@ class Mobsfstatic(ServiceBase):
         """ call to mobsf """
         self.APIKEY = request.get_param('api_key')
         self.SERVER = request.get_param('framework_url')
-
+        print(self.SERVER)
         source = request.file_path
         dest = source + ".apk"
         
@@ -106,8 +108,8 @@ class Mobsfstatic(ServiceBase):
             """save PDF report from MobSF"""
             self.generate_pdf(APK)
             request.add_supplementary("report.pdf", "report.pdf", "PDF of the static analysis from MobSF")
-            request.result = result
         
+        request.result = result
         """cleaning up"""
         self.delete(APK)
         """renaming the file again to allow assemblyline to remove it duh"""
