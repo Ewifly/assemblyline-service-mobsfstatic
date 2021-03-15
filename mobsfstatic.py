@@ -4,6 +4,7 @@ import random
 from requests_toolbelt import MultipartEncoder
 import requests
 import magic
+import tempfile
 
 from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
@@ -52,7 +53,7 @@ class Mobsfstatic(ServiceBase):
         requests.post(self.SERVER + 'api/v1/delete_scan', data=data_obj, headers=headers)
 
 
-    def generate_pdf(self, data):
+    def generate_pdf(self, data, fdfile):
         # generate pdf report
         self.log.debug(f'Requesting PDF report for')
         headers = {'Authorization': self.APIKEY}
@@ -60,7 +61,7 @@ class Mobsfstatic(ServiceBase):
         data_obj = {"hash": json.loads(data)["hash"]}
         response = requests.post(self.SERVER + 'api/v1/download_pdf', data=data_obj, headers=headers, stream=True)
         # building the pdf file from the response
-        with open("report.pdf", 'wb') as doc:
+        with os.fdopen(fdfile, 'wb') as doc:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
                     doc.write(chunk)
@@ -104,10 +105,10 @@ class Mobsfstatic(ServiceBase):
         result.add_section(report_section)
 
         if request.get_param('generate_pdf'):
-            os.chdir(self.working_directory)
             """save PDF report from MobSF"""
-            self.generate_pdf(APK)
-            request.add_supplementary("report.pdf", "report.pdf", "PDF of the static analysis from MobSF")
+            fd, temp_path = tempfile.mkstemp(dir=self.working_directory)
+            self.generate_pdf(APK, fd)
+            request.add_supplementary(temp_path, "report.pdf", "PDF of the static analysis from MobSF")
         
         request.result = result
         """cleaning up"""
