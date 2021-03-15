@@ -19,44 +19,44 @@ class Mobsfstatic(ServiceBase):
     def stop(self):
         self.log.debug("MobSF service ended")
 
-    def upload(self, file, apikey):
+    def upload(self, file):
         # Upload a file
         self.log.debug("Uploading file : " + str(file))
         multipart_data = MultipartEncoder(fields={'file': (file, open(file, 'rb'), 'application/octet-stream')})
-        headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
+        headers = {'Content-Type': multipart_data.content_type, 'Authorization': self.APIKEY}
         
         
-        resp = requests.post(SERVER + 'api/v1/upload', data=multipart_data, headers=headers)
+        resp = requests.post(self.SERVER + 'api/v1/upload', data=multipart_data, headers=headers)
         
         return resp.json()
 
 
-    def scan(self, data, apikey):
+    def scan(self, data):
         # Scan a file
         # @ARG1 : valid return value from upload()
         self.log.debug("Scanning file")
         data = json.dumps(data)
         data_obj = json.loads(data)
-        headers = {'Authorization': apikey}
-        requests.post(SERVER + 'api/v1/scan', data=data_obj, headers=headers)
+        headers = {'Authorization': self.APIKEY}
+        requests.post(self.SERVER + 'api/v1/scan', data=data_obj, headers=headers)
 
 
-    def delete(self, dataobj, apikey):
+    def delete(self, dataobj):
         # Delete scan
         self.log.debug("Deleting Scan")
-        headers = {'Authorization': apikey}
+        headers = {'Authorization': self.APIKEY}
         dataobj = json.dumps(dataobj)
         data_obj = {"hash": json.loads(dataobj)["hash"]}
-        requests.post(SERVER + 'api/v1/delete_scan', data=data_obj, headers=headers)
+        requests.post(self.SERVER + 'api/v1/delete_scan', data=data_obj, headers=headers)
 
 
-    def generate_pdf(self, data, apikey):
+    def generate_pdf(self, data):
         # generate pdf report
         self.log.debug(f'Requesting PDF report for')
-        headers = {'Authorization': apikey}
+        headers = {'Authorization': self.APIKEY}
         data = json.dumps(data)
         data_obj = {"hash": json.loads(data)["hash"]}
-        response = requests.post(SERVER + 'api/v1/download_pdf', data=data_obj, headers=headers, stream=True)
+        response = requests.post(self.SERVER + 'api/v1/download_pdf', data=data_obj, headers=headers, stream=True)
         # building the pdf file from the response
         with open("report.pdf", 'wb') as doc:
             for chunk in response.iter_content(chunk_size=1024):
@@ -65,20 +65,20 @@ class Mobsfstatic(ServiceBase):
         self.log.debug("Report saved as report.pdf")
 
 
-    def generate_json(self, data, apikey):
+    def generate_json(self, data):
         # generate JSON report
         self.log.debug("generating JSON report")
-        headers = {'Authorization': apikey}
+        headers = {'Authorization': self.APIKEY}
         data = json.dumps(data)
         data_obj = {"hash": json.loads(data)["hash"]}
-        resp = requests.post(SERVER + 'api/v1/report_json', data=data_obj, headers=headers)
+        resp = requests.post(self.SERVER + 'api/v1/report_json', data=data_obj, headers=headers)
         return resp.text
 
 
     def execute(self, request):
         """ call to mobsf """
-        APIKEY = request.get_param('api_key')
-        SERVER = request.get_param('framework_url')
+        self.APIKEY = request.get_param('api_key')
+        self.SERVER = request.get_param('framework_url')
 
         source = request.file_path
         dest = source + ".apk"
@@ -86,11 +86,11 @@ class Mobsfstatic(ServiceBase):
         os.rename(source, dest)
 
         """retrieve results"""
-        APK = self.upload(dest, APIKEY)
+        APK = self.upload(dest)
         self.log.debug("\nresult :")
         self.log.debug(APK)
-        self.scan(APK, APIKEY)
-        json_mobsf = {}# self.generate_json(APK, APIKEY)
+        self.scan(APK)
+        json_mobsf = {}# self.generate_json(APK)
         json_mobsf['body'] = 'dumb text'
         """let's build the result section"""
         result = Result()
@@ -102,15 +102,14 @@ class Mobsfstatic(ServiceBase):
         result.add_section(report_section)
 
         if request.get_param('generate_pdf'):
-            os.mknod("report.pdf")
+            os.chdir(self.working_directory)
             """save PDF report from MobSF"""
-            self.generate_pdf(APK, APIKEY)
-            #TODO
+            self.generate_pdf(APK)
             request.add_supplementary("report.pdf", "report.pdf", "PDF of the static analysis from MobSF")
             request.result = result
         
         """cleaning up"""
-        self.delete(APK, APIKEY)
+        self.delete(APK)
         """renaming the file again to allow assemblyline to remove it duh"""
         os.rename(dest, source)
         
