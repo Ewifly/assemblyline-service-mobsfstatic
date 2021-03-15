@@ -16,10 +16,18 @@ disable_cache: false
 # is the service enabled by default
 enabled: true
 
-config:
-  # MobSF Framework specifications
-  remote_host_url: http://127.0.0.1
-  remote_host_port: 8000
+submission_params:
+  - default: false
+    name: generate_pdf
+    type: bool
+    value: false
+  - default: http://0.0.0.0:8000/
+    name: framework_url
+    type: bool
+    value: false
+  - default: 'enter API key of MobSF framework'
+    name: api_key
+    type: str
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
