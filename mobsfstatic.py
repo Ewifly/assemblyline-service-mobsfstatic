@@ -9,10 +9,6 @@ from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FORMAT
 
-
-API_KEY_SIZE = 64
-SERVER = "http://192.168.10.78:8000/"
-
 class Mobsfstatic(ServiceBase):
     def __init__(self, config=None):
         super(Mobsfstatic, self).__init__(config)
@@ -81,34 +77,19 @@ class Mobsfstatic(ServiceBase):
 
     def execute(self, request):
         """ call to mobsf """
-        APIKEY = 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
+        APIKEY = request.get_param('api_key')
+        SERVER = request.get_param('framework_url')
 
         source = request.file_path
         dest = source + ".apk"
         
         os.rename(source, dest)
-        # """ API KEY RETRIEVING """
-        # API_DOC = "api_docs"
-        # html = requests.get(SERVER + API_DOC)
-        # with open('doc.txt', "w+") as f:
-        #     f.write(html.text)
-        # with open('doc.txt', 'r') as f:
-        #     datafile = f.readlines()
-        #     for line in datafile:
-        #         if "REST API Key" in line:
-        #             for i in range(API_KEY_SIZE):
-        #                 APIKEY = APIKEY + line[42 + i]
-        # if os.path.exists("doc.txt"):
-        #     os.remove("doc.txt")
-        # if os.path.exists("doc.html"):
-        #     os.remove("doc.html")
 
         """retrieve results"""
         APK = self.upload(dest, APIKEY)
         self.log.debug("\nresult :")
         self.log.debug(APK)
         self.scan(APK, APIKEY)
-        self.generate_pdf(APK, APIKEY)
         json_mobsf = {}# self.generate_json(APK, APIKEY)
         json_mobsf['body'] = 'dumb text'
         """let's build the result section"""
@@ -120,10 +101,13 @@ class Mobsfstatic(ServiceBase):
                                         body = json.dumps(json_mobsf))
         result.add_section(report_section)
 
-        """save PDF report from MobSF"""
-        #TODO
-        request.add_supplementary("report.pdf", "report.pdf", "PDF of the static analysis from MobSF")
-        request.result = result
+        if request.get_param('generate_pdf'):
+            os.mknod("report.pdf")
+            """save PDF report from MobSF"""
+            self.generate_pdf(APK, APIKEY)
+            #TODO
+            request.add_supplementary("report.pdf", "report.pdf", "PDF of the static analysis from MobSF")
+            request.result = result
         
         """cleaning up"""
         self.delete(APK, APIKEY)
