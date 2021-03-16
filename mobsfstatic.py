@@ -24,6 +24,7 @@ class Mobsfstatic(ServiceBase):
         """ call to mobsf """
         self.APIKEY = request.get_param('api_key')
         self.SERVER = request.get_param('framework_url')
+        print(self.SERVER)
         source = request.file_path
         dest = source + ".apk"
         
