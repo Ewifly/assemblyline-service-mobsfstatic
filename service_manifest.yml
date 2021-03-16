@@ -21,14 +21,10 @@ submission_params:
     name: generate_pdf
     type: bool
     value: true
-  - default: 'http://192.168.10.78:8000/' #your MOBSF framework IP
-    name: framework_url
-    type: str
-    value: false
-  - default: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331' #your MOBSF framework API KEY
-    name: api_key
-    type: str
-    value: false
+
+config:
+  api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
+  framework_url: 'http://192.168.10.78:8000/'
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
