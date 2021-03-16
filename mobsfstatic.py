@@ -38,7 +38,7 @@ class Mobsfstatic(ServiceBase):
         text_section = ResultSection('MobSF Static section')
         result.add_section(text_section)
 
-        report_section = ResultSection("Informations from MobSF", body_format=BODY_FORMAT.JSON,
+        report_section = ResultSection("Informations from MobSF", body_format=BODY_FORMAT.TEXT,
                                         body = json.dumps(json_mobsf))
         result.add_section(report_section)
 
