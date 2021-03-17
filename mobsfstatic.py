@@ -122,7 +122,7 @@ class Mobsfstatic(ServiceBase):
                 dic_section = {}
                 for section in json_mobsf["apkid"]:
                     dic_section["result_section_{}".format(section)] = ResultSection("{}".format(section), parent=result_apkid)
-                    for feature in dic_section["result_section_{}".format(section)]:
+                    for feature in json_mobsf["apkid"][section]:
                         dic_section["result_section_{}".format(section)].add_line(feature)
 
 

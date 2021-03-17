@@ -21,6 +21,10 @@ submission_params:
     name: generate_pdf
     type: bool
     value: true
+  - default: true
+    name: delete_after_scan
+    type: bool
+    value: true
 
 config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
@@ -50,11 +54,5 @@ heuristics:
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
-
-update_config:
-  update_interval_seconds: 3600
-  generates_signatures: false
-  method: run
-  run_options:
-    allow_internet_access: true
-    image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
+  cpu_cores: 1.0
+  ram_mb: 512
