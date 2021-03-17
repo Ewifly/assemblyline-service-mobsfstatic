@@ -26,6 +26,28 @@ config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
   framework_url: 'http://192.168.10.78:8000/'
 
+heuristics:
+  - description: Some permission are defined more then once
+    filetype: android/apk
+    heur_id: 1
+    name: Duplicate permission definition
+    score: 100
+  - description: This APK uses  permissions that can be dangerous
+    filetype: android/apk
+    heur_id: 2
+    name: Dangerous permissions
+    score: 100
+  - description: This APK uses unknown permissions
+    filetype: android/apk
+    heur_id: 3
+    name: Unknown permissions
+    score: 10
+  - description: This APK is not signed. Signing an APK is required to publish on Google Play.
+    filetype: android/apk
+    heur_id: 4
+    name: Unsigned APK
+    score: 400
+
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
 
