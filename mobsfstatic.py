@@ -139,9 +139,11 @@ class Mobsfstatic(ServiceBase):
         if request.get_param('delete_after_scan'):
             api_mobsf.delete(APK, self.SERVER, self.APIKEY)
         else :
-            url = self.SERVER + "/recent_scans/"
-            result_url_to_scan = ResultSection("URL to the MobSF scan",  parent=report_section)
-            result_url_to_scan.add_line(url)
+            url = self.SERVER + "recent_scans/"
+
+            url_section = ResultSection('URL to the scan', parent=report_section, body_format=BODY_FORMAT.URL,
+                                        body=json.dumps({"name": "Scan!", "url": url}))
+            url_section.add_tag('URL to the MobSF scan generated', url)
         request.result = result
         """renaming the file again to allow assemblyline to remove it duh"""
         os.rename(dest, source)
