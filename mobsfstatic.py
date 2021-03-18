@@ -62,19 +62,19 @@ class Mobsfstatic(ServiceBase):
             max_sdk = json_mobsf["max_sdk"]
             report_section.add_line(f"max SDK : {max_sdk}")
 
-        if json_mobsf['size']:
-            size = json_mobsf["size"]
-            report_section.add_line(f"size : {size}")
+        # if json_mobsf['size']:
+        #     size = json_mobsf["size"]
+        #     report_section.add_line(f"size : {size}")
 
-        if json_mobsf['md5']:
-            md5 = json_mobsf["md5"]
-            report_section.add_line(f"MD5 : {md5}")
-        if json_mobsf['sha1']:
-            sha1 = json_mobsf["sha1"]
-            report_section.add_line(f"SHA1 : {sha1}")
-        if json_mobsf['sha256']:
-            sha256 = json_mobsf["sha256"]
-            report_section.add_line(f"SHA256 : {sha256}")
+        # if json_mobsf['md5']:
+        #     md5 = json_mobsf["md5"]
+        #     report_section.add_line(f"MD5 : {md5}")
+        # if json_mobsf['sha1']:
+        #     sha1 = json_mobsf["sha1"]
+        #     report_section.add_line(f"SHA1 : {sha1}")
+        # if json_mobsf['sha256']:
+        #     sha256 = json_mobsf["sha256"]
+        #     report_section.add_line(f"SHA256 : {sha256}")
         if "signature: True" in json_mobsf["certificate_analysis"]["certificate_info"]:
             report_section.add_line(f"APK is signed")
         else:

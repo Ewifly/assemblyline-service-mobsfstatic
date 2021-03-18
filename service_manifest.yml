@@ -17,14 +17,14 @@ disable_cache: false
 enabled: true
 
 submission_params:
-  - default: false
+  - default: true
     name: generate_pdf
     type: bool
     value: true
-  - default: true
+  - default: false
     name: delete_after_scan
     type: bool
-    value: true
+    value: false
 
 config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
