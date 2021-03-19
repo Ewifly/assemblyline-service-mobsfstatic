@@ -5,8 +5,8 @@ from requests_toolbelt import MultipartEncoder
 import requests
 import magic
 import tempfile
-import api_mobsf
-from static import ALL_ANDROID_PERMISSIONS
+from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, delete
+from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
 from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FORMAT, Heuristic
@@ -31,9 +31,9 @@ class Mobsfstatic(ServiceBase):
         os.rename(source, dest)
 
         """retrieve results"""
-        APK = api_mobsf.upload(dest, self.SERVER, self.APIKEY)
-        api_mobsf.scan(APK, self.SERVER, self.APIKEY)
-        json_mobsf = api_mobsf.generate_json(APK, self.SERVER, self.APIKEY)
+        APK = upload(dest, self.SERVER, self.APIKEY)
+        scan(APK, self.SERVER, self.APIKEY)
+        json_mobsf = generate_json(APK, self.SERVER, self.APIKEY)
         """let's build the result section"""
         result = Result()
         text_section = ResultSection('MobSF Static section')
@@ -118,13 +118,25 @@ class Mobsfstatic(ServiceBase):
                     result_api_used.add_tag('file.apk.api', api)
 
             if json_mobsf["apkid"]:
-                result_apkid =  ResultSection("APK ID analysis", parent=report_section)
-                dic_section = {}
+                suspicious_features = []
+                details = []
                 for section in json_mobsf["apkid"]:
-                    dic_section["result_section_{}".format(section)] = ResultSection("{}".format(section), parent=result_apkid)
                     for feature in json_mobsf["apkid"][section]:
-                        dic_section["result_section_{}".format(section)].add_line(feature)
+                        if 'dangerous' in ALL_ANDROID_DANGEROUS_FEATURES[feature]:
+                            suspicious_features.append(feature)
+                            for detail in feature:
+                               details.append([feature, detail])
+                                
 
+            if suspicious_features:
+                result_suspicious_feature = ResultSection("Suspicious features used", parent=report_section, heuristic=Heuristic(5))
+                for feature in suspicious_features:
+                    result_suspicious_feature.add_line(feature[0])
+                    result_suspicious_feature.add_tag('apk.feature', feature[0])
+                    for detail in detail:
+                        if detail[0] == feature:
+                                result_suspicious_feature.add_line(detail[1])
+                                result_suspicious_feature.add_tag('apk.feature.detail', detail[1])
 
 
         result.add_section(report_section)
@@ -132,12 +144,12 @@ class Mobsfstatic(ServiceBase):
         if request.get_param('generate_pdf'):
             """save PDF report from MobSF"""
             fd, temp_path = tempfile.mkstemp(dir=self.working_directory)
-            api_mobsf.generate_pdf(APK, fd, self.SERVER, self.APIKEY)
+            generate_pdf(APK, fd, self.SERVER, self.APIKEY)
             request.add_supplementary(temp_path, "report.pdf", "PDF of the static analysis from MobSF")
         
         """cleaning up"""
         if request.get_param('delete_after_scan'):
-            api_mobsf.delete(APK, self.SERVER, self.APIKEY)
+            delete(APK, self.SERVER, self.APIKEY)
         else :
             url = self.SERVER + "recent_scans/"
 

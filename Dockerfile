@@ -1,6 +1,6 @@
 FROM cccs/assemblyline-v4-service-base:latest
 
-ENV SERVICE_PATH mobsfstatic.Mobsfstatic
+ENV SERVICE_PATH mobsfstatic.mobsfstatic.Mobsfstatic
 
 # Install any service dependencies here
 # For example: RUN apt-get update && apt-get install -y libyaml-dev

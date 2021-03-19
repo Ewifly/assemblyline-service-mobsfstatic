@@ -51,6 +51,11 @@ heuristics:
     heur_id: 4
     name: Unsigned APK
     score: 400
+  - description: This uses suspicious features
+    filetype: android/apk
+    heur_id: 5
+    name: suspicious features
+    score: 400
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
