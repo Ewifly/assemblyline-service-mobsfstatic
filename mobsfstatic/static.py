@@ -533,10 +533,10 @@ ALL_ANDROID_PERMISSIONS = {
     'com.lge.permission.SPRINTHIDDEN': ['system', 'signature'],
     'com.qualcomm.permission.USE_QCRIL_MSG_TUNNEL': ['system', 'signature']}
 
-ALL_ANDROID_SUSPICIOUS_FEATURES = [
+ALL_ANDROID_SUSPICIOUS_FEATURES = {
     'anti_vm',
     'anti_debug'
-]
+}
 
 ALL_FEATURES = [
     'android.hardware.nfc',

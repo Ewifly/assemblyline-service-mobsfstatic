@@ -6,7 +6,7 @@ import requests
 import magic
 import tempfile
 from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, delete
-from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
+from mobsfstatic.static import ALL_ANDROID_PERMISSIONS, ALL_ANDROID_SUSPICIOUS_FEATURES
 from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FORMAT, Heuristic
@@ -118,25 +118,35 @@ class Mobsfstatic(ServiceBase):
                     result_api_used.add_tag('file.apk.api', api)
 
             if json_mobsf["apkid"]:
+                details= []
                 suspicious_features = []
-                details = []
                 for section in json_mobsf["apkid"]:
-                    for feature in json_mobsf["apkid"][section]:
-                        if 'dangerous' in ALL_ANDROID_DANGEROUS_FEATURES[feature]:
-                            suspicious_features.append(feature)
-                            for detail in feature:
-                               details.append([feature, detail])
-                                
+                    suspicious_features.append(list(json_mobsf["apkid"][section].keys()))
+                suspicious_features = suspicious_features[0]
+                print("\n ========================== \n")
+                print(suspicious_features)
+                print("\n ========================== \n")
+                for section in json_mobsf["apkid"]:
+                    for key in suspicious_features:
+                        details.append([key, json_mobsf["apkid"][section][key]])
+                # for section in json_mobsf["apkid"]:
+                #     suspicious_features.append(json_mobsf["apkid"][section])
+                #     for feature in json_mobsf["apkid"][section]:
+                #         if feature in ALL_ANDROID_SUSPICIOUS_FEATURES:
+                #             details.append([json_mobsf["apkid"][section], feature])  
+
+            print(details)
+            print("\n ========================== \n")
 
             if suspicious_features:
                 result_suspicious_feature = ResultSection("Suspicious features used", parent=report_section, heuristic=Heuristic(5))
                 for feature in suspicious_features:
-                    result_suspicious_feature.add_line(feature[0])
-                    result_suspicious_feature.add_tag('apk.feature', feature[0])
-                    for detail in detail:
+                    result_suspicious_feature.add_line(feature)
+                    result_suspicious_feature.add_tag('apk.feature', feature)
+                    for detail in details:
                         if detail[0] == feature:
-                                result_suspicious_feature.add_line(detail[1])
-                                result_suspicious_feature.add_tag('apk.feature.detail', detail[1])
+                            for unitary in detail[1]:
+                                result_suspicious_feature.add_line(unitary)
 
 
         result.add_section(report_section)
