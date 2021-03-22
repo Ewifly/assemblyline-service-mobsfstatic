@@ -139,7 +139,7 @@ class Mobsfstatic(ServiceBase):
 
                 if dangerous_features:
                     result_dangerous_features = ResultSection("Dangerous features used", parent=report_section,
-                                                   heuristic=Heuristic(5))
+                                                   heuristic=Heuristic(6))
                     for feature in dangerous_features:
                         result_dangerous_features.add_line(feature)
                         result_dangerous_features.add_tag('file.apk.feature', feature)
@@ -149,10 +149,9 @@ class Mobsfstatic(ServiceBase):
                                     dic_report_features[feature].add_line(unitary)
                                     dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
                         result_dangerous_features.add_subsection(dic_report_features[feature])
-
                 if suspicious_features:
                     result_suspicious_features = ResultSection("Suspicious features used", parent=report_section,
-                                                   heuristic=Heuristic(6))
+                                                   heuristic=Heuristic(5))
                     for feature in suspicious_features:
                         result_suspicious_features.add_line(feature)
                         result_suspicious_features.add_tag('file.apk.feature', feature)
