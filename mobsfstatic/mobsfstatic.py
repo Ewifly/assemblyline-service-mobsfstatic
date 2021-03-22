@@ -110,11 +110,11 @@ class Mobsfstatic(ServiceBase):
                 all_features,info_features ,suspicious_features, dangerous_features, undefined_features, details = [], [], [], [], [], []
                 dic_report_features = {} #dictionary of reportsection for each insteresting feature raised
                 for section in json_mobsf["apkid"]:
-                    for key in all_features:
-                        details.append([key, json_mobsf["apkid"][section][key]])
-                for section in json_mobsf["apkid"]:
                     all_features.append(list(json_mobsf["apkid"][section].keys()))
                 all_features = all_features[0]
+                for section in json_mobsf["apkid"]:
+                    for key in all_features:
+                        details.append([key, json_mobsf["apkid"][section][key]])
                 for feature in all_features:
                     if feature in ALL_MOBSF_ANDROID_FEATURES:
                         dic_report_features["{0}".format(feature)] = ResultSection("detail for {0}".format(feature)) #create a report section to show details afterwards
@@ -128,13 +128,14 @@ class Mobsfstatic(ServiceBase):
                         undefined_features.append(feature)
 
                 if info_features:
-                    result_features.add_line(feature)
-                    result_features.add_tag('file.apk.feature', feature)
-                    for detail in details:
-                            if detail[0] == feature:
-                                for unitary in detail[1]:
-                                    dic_report_features[feature].add_line(unitary)
-                                    result_features.add_subsection(dic_report_features[feature])
+                    for feature in info_features:
+                        result_features.add_line(feature)
+                        result_features.add_tag('file.apk.feature', feature)
+                        for detail in details:
+                                if detail[0] == feature:
+                                    for unitary in detail[1]:
+                                        dic_report_features[feature].add_line(unitary)
+                        result_features.add_subsection(dic_report_features[feature])
 
                 if dangerous_features:
                     result_dangerous_features = ResultSection("Dangerous features used", parent=report_section,
@@ -147,7 +148,7 @@ class Mobsfstatic(ServiceBase):
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
                                     dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
-                                    result_dangerous_features.add_subsection(dic_report_features[feature])
+                        result_dangerous_features.add_subsection(dic_report_features[feature])
 
                 if suspicious_features:
                     result_suspicious_features = ResultSection("Suspicious features used", parent=report_section,
@@ -156,12 +157,11 @@ class Mobsfstatic(ServiceBase):
                         result_suspicious_features.add_line(feature)
                         result_suspicious_features.add_tag('file.apk.feature', feature)
                         for detail in details:
-
                             if detail[0] == feature:
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
                                     dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
-                                    result_suspicious_features.add_subsection(dic_report_features[feature])
+                        result_suspicious_features.add_subsection(dic_report_features[feature])
 
                 if undefined_features:
                     result_undefined_features = ResultSection("Undefined features used", parent=report_section,
@@ -174,7 +174,7 @@ class Mobsfstatic(ServiceBase):
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
                                     dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
-                                    result_undefined_features.add_subsection(dic_report_features[feature])
+                        result_undefined_features.add_subsection(dic_report_features[feature])
 
         result.add_section(report_section)
 

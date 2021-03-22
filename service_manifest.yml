@@ -53,12 +53,12 @@ heuristics:
     score: 400
   - description: This APK uses dangerous features
     filetype: android/apk
-    heur_id: 5
+    heur_id: 6
     name: dangerous features
     score: 500
   - description: This APK uses suspicious features
     filetype: android/apk
-    heur_id: 6
+    heur_id: 5
     name: suspicious features
     score: 100
   - description: This APK uses udefined features
