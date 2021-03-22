@@ -123,7 +123,6 @@ class Mobsfstatic(ServiceBase):
                 for section in json_mobsf["apkid"]:
                     suspicious_features.append(list(json_mobsf["apkid"][section].keys()))
                 suspicious_features = suspicious_features[0]
-                print(suspicious_features)
                 for section in json_mobsf["apkid"]:
                     for key in suspicious_features:
                         details.append([key, json_mobsf["apkid"][section][key]])

@@ -55,7 +55,7 @@ heuristics:
     filetype: android/apk
     heur_id: 5
     name: suspicious features
-    score: 400
+    score: 100
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG
