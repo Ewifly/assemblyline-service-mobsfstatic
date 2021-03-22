@@ -123,21 +123,10 @@ class Mobsfstatic(ServiceBase):
                 for section in json_mobsf["apkid"]:
                     suspicious_features.append(list(json_mobsf["apkid"][section].keys()))
                 suspicious_features = suspicious_features[0]
-                print("\n ========================== \n")
                 print(suspicious_features)
-                print("\n ========================== \n")
                 for section in json_mobsf["apkid"]:
                     for key in suspicious_features:
                         details.append([key, json_mobsf["apkid"][section][key]])
-                # for section in json_mobsf["apkid"]:
-                #     suspicious_features.append(json_mobsf["apkid"][section])
-                #     for feature in json_mobsf["apkid"][section]:
-                #         if feature in ALL_ANDROID_SUSPICIOUS_FEATURES:
-                #             details.append([json_mobsf["apkid"][section], feature])  
-
-            print(details)
-            print("\n ========================== \n")
-
             if suspicious_features:
                 result_suspicious_feature = ResultSection("Suspicious features used", parent=report_section, heuristic=Heuristic(5))
                 for feature in suspicious_features:
