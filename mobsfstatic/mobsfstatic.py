@@ -2,6 +2,8 @@ import json
 import os
 import random
 from requests_toolbelt import MultipartEncoder
+import time
+from subprocess import Popen, PIPE, call
 import requests
 import magic
 import tempfile
@@ -14,20 +16,29 @@ from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FO
 class Mobsfstatic(ServiceBase):
     def __init__(self, config=None):
         super(Mobsfstatic, self).__init__(config)
+        self.dex2jar = self.config.get("dex2jar_path", None)
 
     def start(self):
         self.log.debug("MobSF service called")
-
+        if not os.path.isfile(self.dex2jar):
+            self.log.error("the service tool DEX2JAR is missing. "
+                           "The service will most likely fail.")
     def stop(self):
         self.log.debug("MobSF service ended")
 
     def execute(self, request):
         """ call to mobsf """
+        result = Result()
+        source = request.file_path
+        filename = os.path.basename(source)
+        d2j_out = os.path.join(self.working_directory, f'{filename}.jar')
         self.APIKEY = self.config.get('api_key', 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331')
         self.SERVER = self.config.get('framework_url', 'http://192.168.10.78:8000/')
-        source = request.file_path
         dest = source + ".apk"
         
+        if request.get_param('resubmit_apk_as_jar'):
+            self.resubmit_dex2jar_output(source, d2j_out, result, request)
+
         os.rename(source, dest)
 
         """retrieve results"""
@@ -35,7 +46,6 @@ class Mobsfstatic(ServiceBase):
         scan(APK, self.SERVER, self.APIKEY)
         json_mobsf = generate_json(APK, self.SERVER, self.APIKEY)
         """let's build the result section"""
-        result = Result()
         text_section = ResultSection('MobSF Static section')
         result.add_section(text_section)
 
@@ -192,7 +202,27 @@ class Mobsfstatic(ServiceBase):
             url_section = ResultSection('URL to the scan', parent=report_section, body_format=BODY_FORMAT.URL,
                                         body=json.dumps({"name": "Scan!", "url": url}))
             url_section.add_tag('URL to the MobSF scan generated', url)
+        
         request.result = result
         """renaming the file again to allow assemblyline to remove it duh"""
         os.rename(dest, source)
+        
+    @staticmethod
+    def get_dex(apk: str, target: str):
+        if apk and target:
+            call(["unzip", "-o", apk, os.path.basename(target)], cwd=os.path.dirname(target))
+
+    def resubmit_dex2jar_output(self, apk_file: str, target: str, result: Result, request):
+        dex = os.path.join(self.working_directory, "classes.dex")
+        self.get_dex(apk_file, dex)
+        if os.path.exists(dex):
+            d2j = Popen([self.dex2jar, "--output", target, dex],
+                        stdout=PIPE, stderr=PIPE)
+            d2j.communicate()
+            if os.path.exists(target):
+                res_sec = ResultSection("Classes.dex file was recompiled as a JAR and re-submitted for analysis")
+                res_sec.add_line(f"JAR file resubmitted as: {os.path.basename(target)}")
+                request.add_extracted(target, os.path.basename(target), "Dex2Jar output JAR file")
+                result.add_section(res_sec)
+        
         

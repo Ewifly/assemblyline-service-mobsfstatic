@@ -25,10 +25,15 @@ submission_params:
     name: delete_after_scan
     type: bool
     value: false
+  - default: false
+    name: resubmit_apk_as_jar
+    type: bool
+    value: false
 
 config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
   framework_url: 'http://192.168.10.78:8000/'
+  dex2jar_path: /opt/al_support/dex2jar-2.0/d2j-dex2jar.sh
 
 heuristics:
   - description: Some permission are defined more then once
