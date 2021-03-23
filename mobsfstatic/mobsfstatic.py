@@ -7,7 +7,8 @@ import requests
 import magic
 import tempfile
 from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, delete
-from mobsfstatic.static import ALL_ANDROID_PERMISSIONS, ALL_MOBSF_ANDROID_FEATURES
+from mobsfstatic.static import ALL_MOBSF_ANDROID_FEATURES
+# from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
 from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FORMAT, Heuristic
@@ -64,42 +65,42 @@ class Mobsfstatic(ServiceBase):
             max_sdk = json_mobsf["max_sdk"]
             report_section.add_line(f"max SDK : {max_sdk}")
 
-        if "signature: True" in json_mobsf["certificate_analysis"]["certificate_info"]:
-            report_section.add_line(f"APK is signed")
-        else:
-            ResultSection("APK is not signed", parent=report_section, heuristic=Heuristic(4))
+        # if "signature: True" in json_mobsf["certificate_analysis"]["certificate_info"]:
+        #     report_section.add_line(f"APK is signed")
+        # else:
+        #     ResultSection("APK is not signed", parent=report_section, heuristic=Heuristic(4))
 
-        if 'permissions' in json_mobsf or len(json_mobsf['permissions'] != 0):
-            permissions = json_mobsf['permissions']
-            dangerous_permissions = []
-            unknown_permissions = []
-            result_permissions = ResultSection("Permissions used", parent=report_section)
-            for perm in json_mobsf["permissions"]:
-                if perm in ALL_ANDROID_PERMISSIONS:
-                    if 'dangerous' in ALL_ANDROID_PERMISSIONS[perm]:
-                        dangerous_permissions.append(perm)
-                    else:
-                        result_permissions.add_line(perm)
-                        result_permissions.add_tag('file.apk.permission', perm)
-                else:
-                    unknown_permissions.append(perm)
+        # if 'permissions' in json_mobsf or len(json_mobsf['permissions'] != 0):
+        #     permissions = json_mobsf['permissions']
+        #     dangerous_permissions = []
+        #     unknown_permissions = []
+        #     result_permissions = ResultSection("Permissions used", parent=report_section)
+        #     for perm in json_mobsf["permissions"]:
+        #         if perm in ALL_ANDROID_PERMISSIONS:
+        #             if 'dangerous' in ALL_ANDROID_PERMISSIONS[perm]:
+        #                 dangerous_permissions.append(perm)
+        #             else:
+        #                 result_permissions.add_line(perm)
+        #                 result_permissions.add_tag('file.apk.permission', perm)
+        #         else:
+        #             unknown_permissions.append(perm)
 
-            if len(set(permissions)) < len(permissions):
-                ResultSection("Some permissions are defined more then once", parent=report_section,
-                              heuristic=Heuristic(1))
-            if dangerous_permissions:
-                result_dangerous_permissions = ResultSection("Dangerous permissions used", parent=report_section,
-                                                   heuristic=Heuristic(2))
-                for perm in dangerous_permissions:
-                    result_dangerous_permissions.add_line(perm)
-                    result_dangerous_permissions.add_tag('file.apk.permission', perm)
+        #     if len(set(permissions)) < len(permissions):
+        #         ResultSection("Some permissions are defined more then once", parent=report_section,
+        #                       heuristic=Heuristic(1))
+        #     if dangerous_permissions:
+        #         result_dangerous_permissions = ResultSection("Dangerous permissions used", parent=report_section,
+        #                                            heuristic=Heuristic(2))
+        #         for perm in dangerous_permissions:
+        #             result_dangerous_permissions.add_line(perm)
+        #             result_dangerous_permissions.add_tag('file.apk.permission', perm)
             
-            if unknown_permissions:
-                result_unknown_permissions = ResultSection("Unknown permissions used", parent=report_section,
-                                                 heuristic=Heuristic(3))
-                for perm in unknown_permissions:
-                    result_unknown_permissions.add_line(perm)
-                    result_unknown_permissions.add_tag('file.apk.permission', perm)
+        #     if unknown_permissions:
+        #         result_unknown_permissions = ResultSection("Unknown permissions used", parent=report_section,
+        #                                          heuristic=Heuristic(3))
+        #         for perm in unknown_permissions:
+        #             result_unknown_permissions.add_line(perm)
+        #             result_unknown_permissions.add_tag('file.apk.permission', perm)
             
             if json_mobsf["android_api"]:
                 result_api_used = ResultSection("Android API used", parent=report_section)

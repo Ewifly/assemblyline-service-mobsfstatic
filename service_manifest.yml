@@ -32,26 +32,26 @@ config:
   dex2jar_path: /opt/al_support/dex2jar-2.0/d2j-dex2jar.sh
 
 heuristics:
-  - description: Some permission are defined more then once
-    filetype: android/apk
-    heur_id: 1
-    name: Duplicate permission definition
-    score: 100
-  - description: This APK uses  permissions that can be dangerous
-    filetype: android/apk
-    heur_id: 2
-    name: Dangerous permissions
-    score: 100
-  - description: This APK uses unknown permissions
-    filetype: android/apk
-    heur_id: 3
-    name: Unknown permissions
-    score: 10
-  - description: This APK is not signed. Signing an APK is required to publish on Google Play.
-    filetype: android/apk
-    heur_id: 4
-    name: Unsigned APK
-    score: 400
+  # - description: Some permission are defined more then once
+  #   filetype: android/apk
+  #   heur_id: 1
+  #   name: Duplicate permission definition
+  #   score: 100
+  # - description: This APK uses  permissions that can be dangerous
+  #   filetype: android/apk
+  #   heur_id: 2
+  #   name: Dangerous permissions
+  #   score: 100
+  # - description: This APK uses unknown permissions
+  #   filetype: android/apk
+  #   heur_id: 3
+  #   name: Unknown permissions
+  #   score: 10
+  # - description: This APK is not signed. Signing an APK is required to publish on Google Play.
+  #   filetype: android/apk
+  #   heur_id: 4
+  #   name: Unsigned APK
+  #   score: 400
   - description: This APK uses suspicious features
     filetype: android/apk
     heur_id: 5
