@@ -54,3 +54,10 @@ def generate_json(data, server, apikey):
     data_obj = {"hash": json.loads(data)["hash"]}
     resp = requests.post(server + 'api/v1/report_json', data=data_obj, headers=headers)
     return resp.text
+
+def generate_code(data, fdfile, type, server):
+    hash = data["hash"]
+    req=requests.get(server + 'generate_downloads/?hash=' + hash + '&file_type=' + type)
+    if req.status_code == 200:
+        response = requests.get(server + 'download/' + hash + "-" + type + ".zip", stream=True)
+        open(fdfile, 'wb').write(response.content)

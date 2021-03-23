@@ -6,7 +6,7 @@ import time
 import requests
 import magic
 import tempfile
-from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, delete
+from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, generate_code, delete
 from mobsfstatic.static import ALL_MOBSF_ANDROID_FEATURES
 # from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
 from assemblyline.common.hexdump import hexdump
@@ -186,6 +186,16 @@ class Mobsfstatic(ServiceBase):
             generate_pdf(APK, fd, self.SERVER, self.APIKEY)
             request.add_supplementary(temp_path, "report.pdf", "PDF of the static analysis from MobSF")
         
+        """generate smali/java code"""
+        if request.get_param('generate_smali_or_java'):
+            fd_smali, temp_path_smali = tempfile.mkstemp(dir=self.working_directory)
+            fd_java, temp_path_java = tempfile.mkstemp(dir=self.working_directory)
+
+            generate_code(APK, fd_smali, 'smali', self.SERVER)
+            generate_code(APK, fd_java, 'java', self.SERVER)
+            request.add_supplementary(temp_path_smali, "smali", "smali code")
+            request.add_supplementary(temp_path_java, "java", "java code")
+        
         """cleaning up"""
         if request.get_param('delete_after_scan'):
             delete(APK, self.SERVER, self.APIKEY)
@@ -199,5 +209,3 @@ class Mobsfstatic(ServiceBase):
         request.result = result
         """renaming the file again to allow assemblyline to remove it duh"""
         os.rename(dest, source)
-        
-        

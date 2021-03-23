@@ -25,6 +25,10 @@ submission_params:
     name: delete_after_scan
     type: bool
     value: false
+  - default: true
+    name: generate_smali_or_java
+    type: bool
+    value: true
 
 config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
