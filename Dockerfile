@@ -3,7 +3,7 @@ FROM cccs/assemblyline-v4-service-base:latest
 ENV SERVICE_PATH mobsfstatic.mobsfstatic.Mobsfstatic
 
 # Install any service dependencies here
-# For example: RUN apt-get update && apt-get install -y libyaml-dev
+RUN apt-get update && apt-get install -y openjdk-8-jre-headless java-common libc6-i386 lib32z1 lib32gcc1 unzip wget && rm -rf /var/lib/apt/lists/*
 RUN python3.7 -m pip install requests
 RUN python3.7 -m pip install requests_toolbelt
 
