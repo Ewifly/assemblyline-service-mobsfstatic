@@ -147,7 +147,7 @@ class Mobsfstatic(ServiceBase):
                             if detail[0] == feature:
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
+                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
                         result_dangerous_features.add_subsection(dic_report_features[feature])
                 if suspicious_features:
                     result_suspicious_features = ResultSection("Suspicious features used", parent=report_section,
@@ -159,7 +159,7 @@ class Mobsfstatic(ServiceBase):
                             if detail[0] == feature:
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
+                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
                         result_suspicious_features.add_subsection(dic_report_features[feature])
 
                 if undefined_features:
@@ -172,7 +172,7 @@ class Mobsfstatic(ServiceBase):
                             if detail[0] == feature:
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.detail', unitary)
+                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
                         result_undefined_features.add_subsection(dic_report_features[feature])
 
         result.add_section(report_section)
