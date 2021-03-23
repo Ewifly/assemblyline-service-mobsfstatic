@@ -2,6 +2,8 @@ FROM cccs/assemblyline-v4-service-base:latest
 
 ENV SERVICE_PATH mobsfstatic.mobsfstatic.Mobsfstatic
 
+USER root
+
 # Install any service dependencies here
 RUN apt-get update && apt-get install -y openjdk-8-jre-headless java-common libc6-i386 lib32z1 lib32gcc1 unzip wget && rm -rf /var/lib/apt/lists/*
 RUN python3.7 -m pip install requests
