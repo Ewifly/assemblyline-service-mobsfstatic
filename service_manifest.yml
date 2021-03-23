@@ -71,6 +71,27 @@ heuristics:
     heur_id: 7
     name: undefined features
     score: 10
+  - description: This APK has a score between 20 and 50 on MobSF
+    filetype: android/apk
+    heur_id: 9
+    name: 20 < MobSF score < 50
+    score: 20
+  - description: This APK has a score between 50 and 70 on MobSF
+    filetype: android/apk
+    heur_id: 10
+    name: 50 < MobSF score < 70 
+    score: 50
+  - description: This APK has a score between 70 and 90 on MobSF
+    filetype: android/apk
+    heur_id: 11
+    name: 70 < MobSF score < 90
+    score: 100
+  - description: This APK has a score over 90 on MobSF
+    filetype: android/apk
+    heur_id: 12
+    name: 90 < MobSF score
+    score: 500
+
 
 docker_config:
   image: ewifly/assemblyline-service-mobsfstatic:$SERVICE_TAG

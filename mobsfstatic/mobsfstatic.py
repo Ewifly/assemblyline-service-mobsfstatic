@@ -39,12 +39,37 @@ class Mobsfstatic(ServiceBase):
         scan(APK, self.SERVER, self.APIKEY)
         json_mobsf = generate_json(APK, self.SERVER, self.APIKEY)
         """let's build the result section"""
-        text_section = ResultSection('MobSF Static section')
-        result.add_section(text_section)
 
         report_section = ResultSection("Informations overview from MobSF")
         json_mobsf = json.loads(json_mobsf)
         
+        if json_mobsf["security_score"]:
+            score = json_mobsf["security_score"]
+            if score < 20:
+                result_score = ResultSection("score from MobSF", parent=report_section)
+                result_score.add_line(score)
+                result_score.add_tag("file.apk.mobsf.score", score)
+            elif 20 <= score < 50:
+                result_score_medium_low = ResultSection("score from MobSF", parent=report_section,
+                                                heuristic=Heuristic(9))
+                result_score_medium_low.add_line(score)
+                result_score_medium_low.add_tag("file.apk.mobsf.score", score)
+            elif 50 <= score < 70:
+                result_score_medium = ResultSection("score from MobSF", parent=report_section,
+                                                heuristic=Heuristic(10))
+                result_score_medium.add_line(score)
+                result_score_medium.add_tag("file.apk.mobsf.score", score)
+            elif 70 <= score < 90:
+                result_score_medium_high= ResultSection("score from MobSF", parent=report_section,
+                                                heuristic=Heuristic(11))
+                result_score_medium_high.add_line(score)
+                result_score_medium_high.add_tag("file.apk.mobsf.score", score)
+            else:
+                result_score_high = ResultSection("score from MobSF", parent=report_section,
+                                                heuristic=Heuristic(12))
+                result_score_high.add_line(score)
+                result_score_high.add_tag("file.apk.mobsf.score", score)
+
         if json_mobsf["app_name"]:
             app_name = json_mobsf["app_name"]
             report_section.add_line(f"App Name: {app_name}")
@@ -102,81 +127,81 @@ class Mobsfstatic(ServiceBase):
         #             result_unknown_permissions.add_line(perm)
         #             result_unknown_permissions.add_tag('file.apk.permission', perm)
             
-            if json_mobsf["android_api"]:
-                result_api_used = ResultSection("Android API used", parent=report_section)
-                for api in json_mobsf["android_api"]:
-                    result_api_used.add_line(api)
-                    result_api_used.add_tag('file.apk.api', api)
+        if json_mobsf["android_api"]:
+            result_api_used = ResultSection("Android API used", parent=report_section)
+            for api in json_mobsf["android_api"]:
+                result_api_used.add_line(api)
+                result_api_used.add_tag('file.apk.api', api)
 
-            if json_mobsf["apkid"]:
-                result_features = ResultSection("Features used", parent=report_section)
-                all_features,info_features ,suspicious_features, dangerous_features, undefined_features, details = [], [], [], [], [], []
-                dic_report_features = {} #dictionary of reportsection for each insteresting feature raised
-                for section in json_mobsf["apkid"]:
-                    all_features.append(list(json_mobsf["apkid"][section].keys()))
-                all_features = all_features[0]
-                for section in json_mobsf["apkid"]:
-                    for key in all_features:
-                        details.append([key, json_mobsf["apkid"][section][key]])
-                for feature in all_features:
-                    if feature in ALL_MOBSF_ANDROID_FEATURES:
-                        dic_report_features["{0}".format(feature)] = ResultSection("detail for {0}".format(feature)) #create a report section to show details afterwards
-                        if 'danger' in ALL_MOBSF_ANDROID_FEATURES[feature]:
-                            dangerous_features.append(feature)
-                        elif 'warning' in ALL_MOBSF_ANDROID_FEATURES[feature]:
-                            suspicious_features.append(feature)
-                        else:
-                            info_features.append(feature)
+        if json_mobsf["apkid"]:
+            result_features = ResultSection("Features used", parent=report_section)
+            all_features,info_features ,suspicious_features, dangerous_features, undefined_features, details = [], [], [], [], [], []
+            dic_report_features = {} #dictionary of reportsection for each insteresting feature raised
+            for section in json_mobsf["apkid"]:
+                all_features.append(list(json_mobsf["apkid"][section].keys()))
+            all_features = all_features[0]
+            for section in json_mobsf["apkid"]:
+                for key in all_features:
+                    details.append([key, json_mobsf["apkid"][section][key]])
+            for feature in all_features:
+                if feature in ALL_MOBSF_ANDROID_FEATURES:
+                    dic_report_features["{0}".format(feature)] = ResultSection("detail for {0}".format(feature)) #create a report section to show details afterwards
+                    if 'danger' in ALL_MOBSF_ANDROID_FEATURES[feature]:
+                        dangerous_features.append(feature)
+                    elif 'warning' in ALL_MOBSF_ANDROID_FEATURES[feature]:
+                        suspicious_features.append(feature)
                     else:
-                        undefined_features.append(feature)
+                        info_features.append(feature)
+                else:
+                    undefined_features.append(feature)
 
-                if info_features:
-                    for feature in info_features:
-                        result_features.add_line(feature)
-                        result_features.add_tag('file.apk.feature', feature)
-                        for detail in details:
-                                if detail[0] == feature:
-                                    for unitary in detail[1]:
-                                        dic_report_features[feature].add_line(unitary)
-                        result_features.add_subsection(dic_report_features[feature])
-
-                if dangerous_features:
-                    result_dangerous_features = ResultSection("Dangerous features used", parent=report_section,
-                                                   heuristic=Heuristic(6))
-                    for feature in dangerous_features:
-                        result_dangerous_features.add_line(feature)
-                        result_dangerous_features.add_tag('file.apk.feature', feature)
-                        for detail in details:
+            if info_features:
+                for feature in info_features:
+                    result_features.add_line(feature)
+                    result_features.add_tag('file.apk.feature', feature)
+                    for detail in details:
                             if detail[0] == feature:
                                 for unitary in detail[1]:
                                     dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
-                        result_dangerous_features.add_subsection(dic_report_features[feature])
-                if suspicious_features:
-                    result_suspicious_features = ResultSection("Suspicious features used", parent=report_section,
-                                                   heuristic=Heuristic(5))
-                    for feature in suspicious_features:
-                        result_suspicious_features.add_line(feature)
-                        result_suspicious_features.add_tag('file.apk.feature', feature)
-                        for detail in details:
-                            if detail[0] == feature:
-                                for unitary in detail[1]:
-                                    dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
-                        result_suspicious_features.add_subsection(dic_report_features[feature])
+                    result_features.add_subsection(dic_report_features[feature])
 
-                if undefined_features:
-                    result_undefined_features = ResultSection("Undefined features used", parent=report_section,
-                                                   heuristic=Heuristic(7))
-                    for feature in undefined_features:
-                        result_undefined_features.add_line(feature)
-                        result_undefined_features.add_tag('file.apk.feature', feature)
-                        for detail in details:
-                            if detail[0] == feature:
-                                for unitary in detail[1]:
-                                    dic_report_features[feature].add_line(unitary)
-                                    dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
-                        result_undefined_features.add_subsection(dic_report_features[feature])
+            if dangerous_features:
+                result_dangerous_features = ResultSection("Dangerous features used", parent=report_section,
+                                                heuristic=Heuristic(6))
+                for feature in dangerous_features:
+                    result_dangerous_features.add_line(feature)
+                    result_dangerous_features.add_tag('file.apk.feature', feature)
+                    for detail in details:
+                        if detail[0] == feature:
+                            for unitary in detail[1]:
+                                dic_report_features[feature].add_line(unitary)
+                                dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
+                    result_dangerous_features.add_subsection(dic_report_features[feature])
+            if suspicious_features:
+                result_suspicious_features = ResultSection("Suspicious features used", parent=report_section,
+                                                heuristic=Heuristic(5))
+                for feature in suspicious_features:
+                    result_suspicious_features.add_line(feature)
+                    result_suspicious_features.add_tag('file.apk.feature', feature)
+                    for detail in details:
+                        if detail[0] == feature:
+                            for unitary in detail[1]:
+                                dic_report_features[feature].add_line(unitary)
+                                dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
+                    result_suspicious_features.add_subsection(dic_report_features[feature])
+
+            if undefined_features:
+                result_undefined_features = ResultSection("Undefined features used", parent=report_section,
+                                                heuristic=Heuristic(7))
+                for feature in undefined_features:
+                    result_undefined_features.add_line(feature)
+                    result_undefined_features.add_tag('file.apk.feature', feature)
+                    for detail in details:
+                        if detail[0] == feature:
+                            for unitary in detail[1]:
+                                dic_report_features[feature].add_line(unitary)
+                                dic_report_features[feature].add_tag('file.apk.feature.{}'.format(feature), unitary)
+                    result_undefined_features.add_subsection(dic_report_features[feature])
 
         result.add_section(report_section)
 
