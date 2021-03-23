@@ -25,10 +25,6 @@ submission_params:
     name: delete_after_scan
     type: bool
     value: false
-  - default: false
-    name: resubmit_apk_as_jar
-    type: bool
-    value: false
 
 config:
   api_key: 'fa5e0f4bab4704b9c9d9d691b91ff360d8ab560804bb428e9f269ec7c0b0d331'
