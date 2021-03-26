@@ -45,30 +45,24 @@ class Mobsfstatic(ServiceBase):
         
         if json_mobsf["security_score"]:
             score = json_mobsf["security_score"]
-            if score < 20:
-                result_score = ResultSection("score from MobSF", parent=report_section)
-                result_score.add_line(score)
-                result_score.add_tag("file.apk.mobsf.score", score)
-            elif 20 <= score < 50:
-                result_score_medium_low = ResultSection("score from MobSF", parent=report_section,
+            if score <= 15:
+                result_score_critical = ResultSection("score from MobSF", parent=report_section)
+                result_score_critical.add_line(score)
+                result_score_critical.add_tag("file.apk.mobsf.score", score, heuristic=Heuristic(8))
+            elif 15 < score <= 40:
+                result_score_high = ResultSection("score from MobSF", parent=report_section,
                                                 heuristic=Heuristic(9))
-                result_score_medium_low.add_line(score)
-                result_score_medium_low.add_tag("file.apk.mobsf.score", score)
-            elif 50 <= score < 70:
+                result_score_high.add_line(score)
+                result_score_high.add_tag("file.apk.mobsf.score", score)
+            elif 40 < score <= 70:
                 result_score_medium = ResultSection("score from MobSF", parent=report_section,
                                                 heuristic=Heuristic(10))
                 result_score_medium.add_line(score)
                 result_score_medium.add_tag("file.apk.mobsf.score", score)
-            elif 70 <= score < 90:
-                result_score_medium_high= ResultSection("score from MobSF", parent=report_section,
-                                                heuristic=Heuristic(11))
-                result_score_medium_high.add_line(score)
-                result_score_medium_high.add_tag("file.apk.mobsf.score", score)
             else:
-                result_score_high = ResultSection("score from MobSF", parent=report_section,
-                                                heuristic=Heuristic(12))
-                result_score_high.add_line(score)
-                result_score_high.add_tag("file.apk.mobsf.score", score)
+                result_score_low= ResultSection("score from MobSF", parent=report_section)
+                result_score_low.add_line(score)
+                result_score_low.add_tag("file.apk.mobsf.score", score)
 
         if json_mobsf["app_name"]:
             app_name = json_mobsf["app_name"]
