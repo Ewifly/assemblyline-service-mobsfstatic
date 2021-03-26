@@ -46,9 +46,9 @@ class Mobsfstatic(ServiceBase):
         if json_mobsf["security_score"]:
             score = json_mobsf["security_score"]
             if score <= 15:
-                result_score_critical = ResultSection("score from MobSF", parent=report_section)
+                result_score_critical = ResultSection("score from MobSF", parent=report_section, heuristic=Heuristic(8))
                 result_score_critical.add_line(score)
-                result_score_critical.add_tag("file.apk.mobsf.score", score, heuristic=Heuristic(8))
+                result_score_critical.add_tag("file.apk.mobsf.score", score)
             elif 15 < score <= 40:
                 result_score_high = ResultSection("score from MobSF", parent=report_section,
                                                 heuristic=Heuristic(9))

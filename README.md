@@ -1,10 +1,13 @@
 # assemblyline-service-mobsfstatic
+
 Alv4 service that links Mobsf framework for static analysis of APKs
 
-Some features from the APKAye service are reused (ie : resubmission of APK as JAR)
+ -Generate MobSF PDF report
 
-Requires a running local instance of Mobsf : https://mobsf.github.io/docs/#/
+ -Smalli/Java code of the APK
+
+ -MobSF score reporting & other informations that can be interesting in the scoring/analysis overview (feel free to modify the heuristics/ResultSection to adapt it to your needs)
+
+Requires a running instance of Mobsf : <https://mobsf.github.io/docs/#/>
 
 Still experimenting
-
-
