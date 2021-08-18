@@ -1,6 +1,6 @@
 # assemblyline-service-mobsfstatic
 
-Alv4 service that links Mobsf framework for static analysis of APKs
+Base of Alv4 service that links Mobsf framework for static analysis of APKs
 
  -Generate MobSF PDF report
 
