@@ -8,7 +8,7 @@ import magic
 import tempfile
 from mobsfstatic.api_mobsf import upload, scan, generate_json, generate_pdf, generate_code, delete
 from mobsfstatic.static import ALL_MOBSF_ANDROID_FEATURES
-# from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
+from mobsfstatic.static import ALL_ANDROID_PERMISSIONS
 from assemblyline.common.hexdump import hexdump
 from assemblyline_v4_service.common.base import ServiceBase
 from assemblyline_v4_service.common.result import Result, ResultSection, BODY_FORMAT, Heuristic
