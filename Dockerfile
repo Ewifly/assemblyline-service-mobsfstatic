@@ -5,9 +5,8 @@ ENV SERVICE_PATH mobsfstatic.mobsfstatic.Mobsfstatic
 USER root
 
 # Install any service dependencies here
-RUN apt-get update && apt-get install -y wget 
-RUN python3.7 -m pip install requests
-RUN python3.7 -m pip install requests_toolbelt
+RUN python -m pip install requests
+RUN python -m pip install requests_toolbelt
 # Switch to assemblyline user
 USER assemblyline
 
