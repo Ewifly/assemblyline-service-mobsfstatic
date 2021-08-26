@@ -87,12 +87,12 @@ class Mobsfstatic(ServiceBase):
             max_sdk = json_mobsf["max_sdk"]
             report_section.add_line(f"max SDK : {max_sdk}")
 
-         if "signature: True" in json_mobsf["certificate_analysis"]["certificate_info"]:
+        if "signature: True" in json_mobsf["certificate_analysis"]["certificate_info"]:
              report_section.add_line(f"APK is signed")
-         else:
+        else:
              ResultSection("APK is not signed", parent=report_section, heuristic=Heuristic(4))
 
-         if 'permissions' in json_mobsf or len(json_mobsf['permissions'] != 0):
+        if 'permissions' in json_mobsf or len(json_mobsf['permissions'] != 0):
              permissions = json_mobsf['permissions']
              dangerous_permissions = []
              unknown_permissions = []
